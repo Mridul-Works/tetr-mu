@@ -8,11 +8,37 @@ const Chev = () => (
   </svg>
 );
 
+// the phone menu: the same four destinations as the desktop bar
+const MENU = [
+  { label: "Programs", href: "#programmes" },
+  { label: "Faculty", href: "https://tetr.com" },
+  { label: "Student Life", href: "https://tetr.com" },
+  { label: "About", href: "https://tetr.com" },
+];
+
 /** MU's site-top: dark announcement bar + the header pill (wide at the top, glass pill once you scroll). */
 export default function Header() {
   const topRef = useRef<HTMLDivElement>(null);
   const hdrRef = useRef<HTMLElement>(null);
   const [annOpen, setAnnOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // the phone menu closes on Escape, on a tap outside it, and when the screen grows past the burger
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = () => setMenuOpen(false);
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") close(); };
+    const onDown = (e: PointerEvent) => { if (!hdrRef.current?.contains(e.target as Node)) close(); };
+    const wide = matchMedia("(min-width: 900px)");
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onDown);
+    wide.addEventListener("change", close);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onDown);
+      wide.removeEventListener("change", close);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     const top = topRef.current!, hdr = hdrRef.current!;
@@ -87,10 +113,26 @@ export default function Header() {
           </nav>
           <div className="site-header__actions">
             <a href="https://applications.tetr.com" className="btn btn--primary btn--light site-header__apply"><span className="btn__label">Apply</span></a>
-            <button type="button" className="site-header__burger" aria-label="Open menu">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true"><path d="M4 8.5h16M4 15.5h16" /></svg>
+            <button type="button" className="site-header__burger" aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} aria-controls="mnav" onClick={() => setMenuOpen((v) => !v)}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" aria-hidden="true">
+                <path className="burger__bars" d="M4 8.5h16M4 15.5h16" />
+                <path className="burger__x" d="M6 6l12 12M18 6L6 18" />
+              </svg>
             </button>
           </div>
+          <nav id="mnav" className="mnav" aria-label="Menu" hidden={!menuOpen}>
+            <ul role="list">
+              {MENU.map((m) => (
+                <li key={m.label}>
+                  <a href={m.href} onClick={() => setMenuOpen(false)}>
+                    {m.label}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                  </a>
+                </li>
+              ))}
+              <li className="mnav__apply"><a href="https://applications.tetr.com" onClick={() => setMenuOpen(false)}>Apply</a></li>
+            </ul>
+          </nav>
         </div>
       </header>
     </div>

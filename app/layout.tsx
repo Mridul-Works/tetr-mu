@@ -7,6 +7,7 @@ import "./mu.css";
 import "./mu2.css";
 import "./mu3.css";
 import "./mu4.css";
+import "./mobile.css";
 
 // MU's own pairing: Newsreader stands in for Season Serif (MU's declared fallback), Instrument Sans for body and UI
 const serif = Newsreader({ variable: "--font-serif", subsets: ["latin"], axes: ["opsz"], display: "swap" });

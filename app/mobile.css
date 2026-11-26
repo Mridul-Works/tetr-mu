@@ -1,0 +1,75 @@
+/* Phone and small-tablet fixes. Loaded last, so it wins over the section files. */
+
+/* ---------- nothing may widen the page ----------
+   The footer logo's blocks start scattered outside the column before they lock in. Left unclipped they
+   stretched the layout to ~500px on a 390px phone, which pushed the fixed header (Apply, menu button)
+   off the right edge for the whole page. Clip at the footer and guard at the root. */
+html { overflow-x: clip; }
+.ft { overflow-x: clip; }
+
+/* ---------- header: the menu behind the burger ---------- */
+.mnav { display: none; }
+.site-header__burger .burger__x { display: none; }
+.site-header__burger[aria-expanded="true"] .burger__x { display: block; }
+.site-header__burger[aria-expanded="true"] .burger__bars { display: none; }
+@media (width <= 899.98px) {
+  .mnav { position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 1; display: block; padding: .5rem; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px #0a0a0a12, 0 18px 40px -16px #0a0a0a59; color: var(--c-ink-2); transform-origin: 50% 0; animation: mnav-in 260ms var(--ease-out) both; }
+  .mnav[hidden] { display: none; }
+  .mnav ul { display: grid; margin: 0; padding: 0; list-style: none; }
+  .mnav li + li { border-top: 1px solid #0a0a0a0f; }
+  .mnav a { display: flex; justify-content: space-between; align-items: center; min-height: 52px; padding: 0 .875rem; border-radius: 12px; font-size: 1.0625rem; font-weight: 500; letter-spacing: -.01em; color: var(--c-ink-2); -webkit-tap-highlight-color: transparent; }
+  .mnav a:active { background: #0a0a0a0a; }
+  .mnav a svg { flex: none; opacity: .45; }
+  .mnav__apply { margin-top: .5rem; }
+  .mnav .mnav__apply a { justify-content: center; border-radius: var(--r-pill); background: var(--c-forest); color: #fff; }
+  .mnav .mnav__apply a:active { background: var(--c-tetr); }
+  .mnav li.mnav__apply { border-top: 0; }
+  .site-header__burger { -webkit-tap-highlight-color: transparent; }
+}
+@keyframes mnav-in { from { opacity: 0; transform: translateY(-6px) scale(.98); } }
+@media (prefers-reduced-motion: reduce) { .mnav { animation: none; } }
+
+@media (width <= 767.98px) {
+  /* ---------- hero: keep room for the logo above the headline ----------
+     Hero.tsx places the logo between the header and the copy and never draws it under 120px tall.
+     On short or narrow phones the copy started too high, so the headline ran over the logo. */
+  .hero__inner { padding-top: calc(var(--header-h) + 15rem); }
+
+  /* ---------- results: venture names wrap as one centred cloud, not a ragged three-column grid ---------- */
+  .arc__names, .arc__names--l, .arc__names--r { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: .5rem 1rem; }
+  .arc__stage { row-gap: 1rem; }
+
+  /* ---------- outcomes: the two tiles ---------- */
+  .proof__glow { opacity: .2; }
+  /* headings, tiles and captions share rows, so a wrapped heading on one side no longer drops its tile */
+  .proof__cols { gap: 1rem .625rem; grid-template-rows: auto auto auto auto; }
+  .proof__col { grid-row: span 3; grid-template-rows: subgrid; row-gap: .625rem; }
+  .proof__col-h { align-self: end; font-size: .875rem; line-height: 1.25; text-wrap: balance; }
+  .proof__list-wrap { scrollbar-width: none; }
+  .proof__list-wrap::-webkit-scrollbar { display: none; }
+  /* the result tile is ~160px wide here: size its contents to fit instead of clipping "$102,361" */
+  .proof__result { padding: .75rem; gap: .125rem; }
+  .proof__result-tag { top: .75rem; left: .75rem; right: 3.25rem; font-size: .6875rem; line-height: 1.25; }
+  .proof__result-blocks { top: .75rem; right: .75rem; grid-template-columns: repeat(4, 8px); grid-auto-rows: 8px; gap: 2px; }
+  .proof__result-big { font-size: clamp(1.375rem, 7vw, 2.5rem); }
+  .proof__result.is-org .proof__result-big { font-size: clamp(1.25rem, 6.2vw, 2.25rem); }
+  .proof__result-small { font-size: var(--fs-small); line-height: 1.3; }
+  .proof__result-count { display: none; }
+  .proof__cap { padding: 0 .125rem; font-size: var(--fs-small); }
+
+  /* ---------- report buttons: a clean stack, not a ragged wrap around a stray divider ---------- */
+  .proof__reports, .chk__links { flex-direction: column; align-items: stretch; gap: .625rem; }
+  .proof__reports .proof__report-sep, .chk__links .proof__report-sep { display: none; }
+  .proof__report, .chk__links a { justify-content: flex-start; }
+  .proof__report::after, .chk__links .chk__pdf { margin-left: auto; }
+  .chk__links a svg { margin-left: auto; order: 0; }
+  .chk__links { margin-top: 2rem; }
+
+  /* ---------- faculty: the 40 / 30 / 30 split reads as rows, not three squeezed columns ---------- */
+  .fac2__mix { grid-template-columns: 1fr; gap: 0; }
+  .fac2__share { grid-template-columns: 5.25rem minmax(0, 1fr); column-gap: 1rem; row-gap: .25rem; align-items: start; padding-block: 1rem; border-top: 1px solid #ffffff1f; }
+  .fac2__share:last-child { border-bottom: 1px solid #ffffff1f; }
+  .fac2__share b { grid-row: 1 / span 2; }
+  .fac2__share-t, .fac2__share-l { grid-column: 2; }
+  .fac2__share-l { font-size: var(--fs-small); }
+}
